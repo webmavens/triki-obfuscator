@@ -1,5 +1,5 @@
 {
-    "name": "web-mavens/triki-obfuscator",
+    "name": "webmavens/triki-obfuscator",
     "description": "Laravel package for database obfuscation using Triki",
     "type": "library",
     "license": "MIT",
@@ -10,8 +10,8 @@
     },
     "authors": [
         {
-            "name": "amit-wm",
-            "email": "amit@webmavens.com"
+            "name": "webmavens",
+            "email": "info@webmavens.com"
         }
     ],
     "extra": {
