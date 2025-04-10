@@ -16,7 +16,7 @@ Triki is a Laravel package that provides an obfuscated database dump using the T
 To install the package, run the following command:
 
 ```sh
-composer require web-mavens/triki-obfuscator
+composer require webmavens/triki-obfuscator
 ```
 
 ## Configuration
