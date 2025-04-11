@@ -38,6 +38,7 @@ class GenerateObfuscatedDumpJob implements ShouldQueue
     public function handle(): void
     {
         Log::info('Starting obfuscated dump download...');
+
         try {
             $dbConfig = config("database.connections.{$this->dbConnection}");
             $dbUser = $dbConfig['username'];
@@ -47,10 +48,17 @@ class GenerateObfuscatedDumpJob implements ShouldQueue
 
             $date = now()->format('Y-m-d_H:i:s');
             $filename = "obfuscated_dump_{$date}.sql";
-            $dumpPath = storage_path("app/private/obfuscated/{$filename}");
+
+            $relativeDir = 'app/private/obfuscated';
+            $absoluteDir = storage_path($relativeDir);
+            $dumpPath = "{$absoluteDir}/{$filename}";
+
+            if (!file_exists($absoluteDir)) {
+                mkdir($absoluteDir, 0755, true);
+            }
+
             $packagePath = realpath(__DIR__ . '/../../');
             $obfuscatorPath = escapeshellarg(base_path('obfuscator.cr'));
-            Storage::makeDirectory('obfuscated');
 
             $tablesToKeep = $this->keepTables;
             $tablesString = implode(' ', $tablesToKeep);
@@ -63,7 +71,7 @@ class GenerateObfuscatedDumpJob implements ShouldQueue
                 foreach ($tablesToKeep as $table) {
                     $pgTables .= "--table={$table} ";
                 }
-    
+
                 $command = "cd {$packagePath} && PGPASSWORD={$dbPass} pg_dump --host={$dbHost} --port=5432 --username={$dbUser} --dbname={$dbName} {$pgTables}--no-owner --no-privileges --format=plain | crystal run {$obfuscatorPath} 2>&1 | grep -v 'WARN - triki' > {$dumpPath}";
             } else {
                 throw new Exception("Unsupported database connection: {$this->dbConnection}");
@@ -79,18 +87,23 @@ class GenerateObfuscatedDumpJob implements ShouldQueue
                     'return_code' => $returnVar,
                 ]);
 
-                // Send failure notification with error message
-                Notification::route('mail', $this->email)->notify(new DumpReadyNotification('failure', $errorMessage));
+                Notification::route('mail', $this->email)->notify(
+                    new DumpReadyNotification('failure', $errorMessage)
+                );
 
                 throw new Exception('Failed to generate obfuscated dump. Check logs for details.');
             }
 
             Log::info('Obfuscated dump generated successfully.', ['file' => $dumpPath]);
-            // Send success notification
-            Notification::route('mail', $this->email)->notify(new DumpReadyNotification('success'));
+
+            Notification::route('mail', $this->email)->notify(
+                new DumpReadyNotification('success')
+            );
         } catch (Exception $e) {
             Log::error('Error in GenerateObfuscatedDumpJob: ' . $e->getMessage());
-            Notification::route('mail', $this->email)->notify(new DumpReadyNotification('failure', $e->getMessage()));
+            Notification::route('mail', $this->email)->notify(
+                new DumpReadyNotification('failure', $e->getMessage())
+            );
 
             throw $e;
         }
