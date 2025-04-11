@@ -64,7 +64,7 @@ class GenerateObfuscatedDumpJob implements ShouldQueue
             $tablesString = implode(' ', $tablesToKeep);
 
             if ($this->dbConnection === 'mysql') {
-                $command = "cd {$packagePath} && mysqldump --single-transaction --quick --no-autocommit --add-drop-table --hex-blob -u {$dbUser} -p{$dbPass} {$dbName} --tables {$tablesString} | crystal run {$obfuscatorPath} 2>&1 | grep -v 'WARN - triki' > {$dumpPath}";
+                $command = "cd {$packagePath} && mysqldump -c --single-transaction --quick --no-autocommit --add-drop-table --hex-blob -u {$dbUser} -p{$dbPass} {$dbName} --tables {$tablesString} | crystal run {$obfuscatorPath} 2>&1 | grep -v 'WARN - triki' > {$dumpPath}";
             } elseif ($this->dbConnection === 'pgsql') {
                 $pgTables = '';
 

@@ -12,7 +12,10 @@
         <div class="row">
             <div class="col-md-6">
                 <p><b>Note:</b> <i>Unchecked tables will be ignored during the dump.</i></p>
-                <p id="status"></p>
+                <div class="mb-2">
+                    <button type="button" class="btn btn-sm btn-secondary" id="selectAll">Select All</button>
+                    <button type="button" class="btn btn-sm btn-warning" id="unselectAll">Unselect All</button>
+                </div>
                 <form id="dumpForm">
                 @csrf
                 @forelse($tables as $table)
@@ -28,6 +31,7 @@
                     <div class="mb-3 mt-3">
                         <input type="email" name="email" class="form-control"  placeholder="Enter your email for notification">
                     </div>
+                    <p id="status"></p>
                     <button type="submit" class="btn btn-primary">Download</button>
                 </form>
             </div>
@@ -78,6 +82,14 @@
 
         $('.delete-btn').click(function () {
             return confirm('Are you sure you want to delete this file?');
+        });
+
+        $('#selectAll').click(function () {
+            $('input[name="tables[]"]').prop('checked', true);
+        });
+
+        $('#unselectAll').click(function () {
+            $('input[name="tables[]"]').prop('checked', false);
         });
     </script>
 </body>
