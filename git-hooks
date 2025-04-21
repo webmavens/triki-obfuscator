@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Get commit message file
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Skip merge commits
+if grep -qE "^Merge " "$COMMIT_MSG_FILE"; then
+  echo "ℹ️  Merge commit detected. Skipping issue number check."
+  exit 0
+fi
+
+# Check for issue number pattern (e.g., #123)
+if ! grep -qE "#[0-9]+" "$COMMIT_MSG_FILE"; then
+  echo "❌ Commit message must include an issue number like #123"
+  exit 1
+fi
+
+echo "✅ Commit message includes an issue number."
+exit 0

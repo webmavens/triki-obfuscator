@@ -24,8 +24,17 @@
     "scripts": {
         "post-uninstall-cmd": [
             "rm -rf vendor/webmavens/triki-obfuscator"
+        ],
+        "post-install-cmd": [
+            "@copy-hooks"
+        ],
+        "post-update-cmd": [
+            "@copy-hooks"
+        ],
+        "copy-hooks": [
+            "bash -c 'cp git-hooks .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg && echo \"\u2705 commit-msg hook installed.\"'"
         ]
     },
     "minimum-stability": "dev",
-    "require": {}
+    "require": []
 }
