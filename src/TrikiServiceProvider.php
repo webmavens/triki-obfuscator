@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace WebMavens\Triki;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use WebMavens\Triki\Http\Middleware\AuthMiddleware;
+use WebMavens\Triki\Http\Middleware\AuthorizeTriki;
 
 class TrikiServiceProvider extends ServiceProvider
 {
@@ -15,7 +17,9 @@ class TrikiServiceProvider extends ServiceProvider
     {
         $router = $this->app['router'];
         $router->aliasMiddleware('triki.auth', AuthMiddleware::class);
+        $router->aliasMiddleware('triki.authorize', AuthorizeTriki::class);
 
+        $this->registerTrikiGate();
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
         $this->loadViewsFrom(__DIR__ . '/views', 'triki');
 
@@ -60,5 +64,19 @@ class TrikiServiceProvider extends ServiceProvider
             obfuscator.globally_kept_columns = %w[id created_at updated_at]
             obfuscator.obfuscate(STDIN, STDOUT)
             CR;
+    }
+
+    /**
+     * Register the Triki authorization gate.
+     */
+    protected function registerTrikiGate(): void
+    {
+        Gate::define('viewTriki', function ($user) {
+            if (!config('triki.auth.enabled')) {
+                return true; // If auth is disabled, allow everyone
+            }
+
+            return in_array($user->email, config('triki.auth.authorized_emails', []));
+        });
     }
 }

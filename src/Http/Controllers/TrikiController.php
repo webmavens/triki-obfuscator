@@ -18,13 +18,14 @@ class TrikiController extends Controller
 {
     public function index(): View
     {
-        $database = env('DB_DATABASE');
-        $connection = env('DB_CONNECTION');
+        $connection = config('database.default');
+        $dbConfig = config("database.connections.{$connection}");
+        $tables = [];
 
         if ($connection === 'pgsql') {
             $tables = DB::select("SELECT tablename AS TABLE_NAME FROM pg_tables WHERE schemaname = 'public'");
         } else {
-            $tables = DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?", [$database]);
+            $tables = DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?", [$dbConfig['database']]);
         }
 
         $dumpFiles = [];

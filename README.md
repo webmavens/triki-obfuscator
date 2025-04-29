@@ -21,6 +21,10 @@ composer require webmavens/triki-obfuscator
 
 ## Configuration
 
+```sh
+php artisan vendor:publish --tag=triki-config
+```
+
 ### Environment Variables
 
 Ensure your `.env` file contains database credentials:
@@ -48,6 +52,23 @@ To protect Triki routes, add an authentication key in your `.env` file(If you no
 ```
 TRIKI_AUTH_KEY=your_secure_key
 ```
+
+### Optional Route Protection
+
+Configure Authorized Emails:
+Update the `config/triki.php` file to enable authentication and define the allowed emails:
+
+```php
+'auth' => [
+    'enabled' => true,
+    'authorized_emails' => [
+        'your.email@example.com',
+        'another@example.com',
+    ],
+],
+```
+
+If you want to more secure your route then use authorized_emails in `config/triki.php`
 
 ## Usage
 

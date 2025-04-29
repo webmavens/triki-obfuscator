@@ -13,7 +13,7 @@ class AuthMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $validKey = config('triki.auth_key');
+        $validKey = config('triki.auth.auth_key');
 
         if (session('triki_authenticated')) {
             return $next($request);
