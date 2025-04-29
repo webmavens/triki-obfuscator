@@ -41,8 +41,8 @@ class GenerateObfuscatedDumpJob implements ShouldQueue
 
         try {
             $dbConfig = config("database.connections.{$this->dbConnection}");
-            $dbUser = $dbConfig['username'];
-            $dbPass = $dbConfig['password'];
+            $dbUser = $dbConfig['username'] ?? '';
+            $dbPass = $dbConfig['password'] ?? '';
             $dbName = $dbConfig['database'];
             $dbHost = $dbConfig['host'] ?? 'localhost';
 
@@ -73,6 +73,14 @@ class GenerateObfuscatedDumpJob implements ShouldQueue
                 }
 
                 $command = "cd {$packagePath} && PGPASSWORD={$dbPass} pg_dump --host={$dbHost} --port=5432 --username={$dbUser} --dbname={$dbName} {$pgTables}--no-owner --no-privileges --format=plain | crystal run {$obfuscatorPath} 2>&1 | grep -v 'WARN - triki' > {$dumpPath}";
+            } elseif ($this->dbConnection === 'sqlite') {
+                Log::warning('Obfuscated dumps are not supported for SQLite.');
+                $sqlitePath = escapeshellarg($dbConfig['database']);
+
+                $dumpCommands = implode("\n", array_map(fn($table) => ".dump {$table}", $this->keepTables));
+                $dumpCommandsEscaped = escapeshellarg($dumpCommands);
+
+                $command = "echo {$dumpCommandsEscaped} | sqlite3 {$sqlitePath} > {$dumpPath}";
             } else {
                 throw new Exception("Unsupported database connection: {$this->dbConnection}");
             }

@@ -8,8 +8,19 @@ Triki is a Laravel package that provides an obfuscated database dump using the T
 
 - Laravel
 - PHP
-- MySQL
+- MySQL/pgSQL
 - [Crystal Language installed on your system/server](https://crystal-lang.org/install/)
+
+## Important Note (For SQLite users)
+
+If you are using **SQLite**, the dump will **not obfuscate** any data. It will only generate and download a plain SQL file containing the selected tables.
+
+- There is **no need to use or modify** the `obfuscator.cr` file for SQLite.
+- Ensure `sqlite3` is installed on your server/system:
+
+```sh
+sudo apt install sqlite3
+
 
 ## Installation
 

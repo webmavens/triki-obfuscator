@@ -11,7 +11,7 @@
         <h1 class="text-center mb-4"><b>Download Obfuscated Dump</b></h1>
         <div class="row">
             <div class="col-md-6">
-                <p><b>Note:</b> <i>Unchecked tables will be ignored during the dump.</i></p>
+                <p><b>Note:</b> <i>Unchecked tables will be ignored during the dump.</i> <br><i>Obfuscated dump is only supported for MySQL and PostgreSQL. SQLite dumps will include selected tables but are not obfuscated.</i></p>
                 <div class="mb-2">
                     <button type="button" class="btn btn-sm btn-secondary" id="selectAll">Select All</button>
                     <button type="button" class="btn btn-sm btn-warning" id="unselectAll">Unselect All</button>
